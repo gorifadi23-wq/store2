@@ -23,7 +23,7 @@ jobs:
           pip install --upgrade pip
           pip install buildozer cython
 
-      - name: Install Android SDK
+      - name: Install Android SDK (API 33 only)
         run: |
           mkdir -p $HOME/android-sdk/cmdline-tools
           cd $HOME/android-sdk/cmdline-tools
