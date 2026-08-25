@@ -6,6 +6,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
 
+from plyer import filechooser
 from excel_reader import read_excel_file
 
 Window.size = (400, 700)
@@ -19,7 +20,7 @@ class MainLayout(BoxLayout):
         self.add_widget(self.label)
 
         btn = Button(text="اختيار ملف Excel")
-        btn.bind(on_press=self.load_excel)
+        btn.bind(on_press=self.open_file_picker)
         self.add_widget(btn)
 
         self.result_area = ScrollView(size_hint=(1, 1))
@@ -28,9 +29,16 @@ class MainLayout(BoxLayout):
         self.result_area.add_widget(self.result_grid)
         self.add_widget(self.result_area)
 
-    def load_excel(self, instance):
-        # مسار ثابت مؤقتاً – لاحقاً نضيف اختيار ملف
-        path = "data.xlsx"
+    def open_file_picker(self, instance):
+        filechooser.open_file(on_selection=self.load_excel)
+
+    def load_excel(self, selection):
+        if not selection:
+            self.label.text = "لم يتم اختيار أي ملف"
+            return
+
+        path = selection[0]
+        self.label.text = f"جاري قراءة الملف:\n{path}"
 
         try:
             data = read_excel_file(path)
@@ -38,11 +46,11 @@ class MainLayout(BoxLayout):
 
             for row in data:
                 self.result_grid.add_widget(Label(text=str(row)))
-            
+
             self.label.text = "تم تحميل الملف بنجاح"
 
         except Exception as e:
-            self.label.text = f"خطأ: {e}"
+            self.label.text = f"خطأ أثناء قراءة الملف:\n{e}"
 
 class ExcelManagerApp(App):
     def build(self):
