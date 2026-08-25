@@ -37,6 +37,7 @@ jobs:
 
       - name: Build APK
         run: |
+          cd $GITHUB_WORKSPACE
           export ANDROID_HOME=$HOME/android-sdk
           export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
           buildozer android debug
